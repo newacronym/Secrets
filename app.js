@@ -9,9 +9,7 @@ const passport = require("passport");
 const passportLocalMongoose = require('passport-local-mongoose');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const findOrCreate = require("mongoose-findorcreate");
-// const md5 = require("md5"); // for hashing
-// const bcrypt = require("bcrypt"); // hashing but better far than md5
-//var encrypt = require('mongoose-encryption');   for encryption
+
 
 const app = express();
 
@@ -24,19 +22,20 @@ app.use(bodyParser.urlencoded({
 app.use(session({
   secret: "Our little secret.",
   resave: false,
-  saveUninitalized: false
+  saveUninitialized: true,
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb://localhost:27017/userDB");
+mongoose.connect(process.env.MONGO_URL);
 
 const userSchema = new mongoose.Schema({
   email: String,
   password: String,
   googleId: String,
-  secret: String
+  title: String,
+  secret: [],
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -120,11 +119,13 @@ app.get("/submit", function(req,res){
 
 app.post("/submit", function(req,res){
   const submittedSecret = req.body.secret;
+  const submittedSecretTitle = req.body.title;
 
   User.findById(req.user.id,function(err,foundUser){
     if(!err){
         if(foundUser){
-          foundUser.secret = submittedSecret;
+          foundUser.secret.push(submittedSecret);
+          foundUser.title = submittedSecretTitle;
           foundUser.save(function(){
             res.redirect("/secrets");
           });
