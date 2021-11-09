@@ -4,8 +4,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
-const session = require('cookie-session');
+const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const MongoDBStore = require('connect-mongodb-session')(session);
 const passport = require("passport");
 const passportLocalMongoose = require('passport-local-mongoose');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -20,9 +21,21 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+var store = new MongoDBStore({
+  uri: process.env.MONGO_URL,
+  collection: 'mySessions'
+});
+store.on('error', function(error) {
+  console.log(error);
+});
+
 
 app.use(session({
   secret: "Our little secret.",
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+  },
+  store: store,
   resave: false,
   saveUninitialized: true,
 }));
