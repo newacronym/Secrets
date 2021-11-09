@@ -23,7 +23,9 @@ app.use(bodyParser.urlencoded({
 
 app.use(session({
   secret: "Our little secret.",
-  store: MongoStore.create({ mongoUrl: process.env.MONGO_URL }),
+  session({
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URL })
+  }),  
   resave: false,
   saveUninitialized: true,
 }));
