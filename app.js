@@ -74,6 +74,7 @@ passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     callbackURL: "/auth/google/secrets"
+    // http://localhost:3000
   },
   function(accessToken, refreshToken, profile, cb) {
     console.log(profile);
