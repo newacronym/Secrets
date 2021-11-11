@@ -21,21 +21,21 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-var store = new MongoDBStore({
-  uri: process.env.MONGO_URL,
-  collection: 'mySessions'
-});
-store.on('error', function(error) {
-  console.log(error);
-});
+// var store = new MongoDBStore({
+//   uri: process.env.MONGO_URL,
+//   collection: 'mySessions'
+// });
+// store.on('error', function(error) {
+//   console.log(error);
+// });
 
 
 app.use(session({
   secret: "Our little secret.",
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
-  },
-  store: store,
+  // cookie: {
+  //   maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+  // },
+  // store: store,
   resave: false,
   saveUninitialized: true,
 }));
