@@ -21,21 +21,24 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-var store = new MongoDBStore({
-  uri: process.env.MONGO_URL,
-  collection: 'mySessions'
-});
-store.on('error', function(error) {
-  console.log(error);
-});
+// to store sessions in db
+// var store = new MongoDBStore({
+//   uri: process.env.MONGO_URL,
+//   collection: 'mySessions'
+// });
+// store.on('error', function(error) {
+//   console.log(error);
+// });
 
 
 app.use(session({
   secret: "Our little secret.",
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
-  },
-  store: store,
+
+  // if u want to store sessions in db , for this project i am not
+  // cookie: {
+  //   maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+  // },
+  // store: store,
   resave: false,
   saveUninitialized: true,
 }));
@@ -49,7 +52,7 @@ const userSchema = new mongoose.Schema({
   email: String,
   password: String,
   googleId: String,
-  title: String,
+  title: [],
   secret: [],
 });
 
@@ -141,7 +144,7 @@ app.post("/submit", function(req,res){
     if(!err){
         if(foundUser){
           foundUser.secret.push(submittedSecret);
-          foundUser.title = submittedSecretTitle;
+          foundUser.title.push(submittedSecretTitle);
           foundUser.save(function(){
             res.redirect("/secrets");
           });
