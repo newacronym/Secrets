@@ -75,8 +75,7 @@ passport.deserializeUser(function(id, done) {
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: "https://frozen-brushlands-38603.herokuapp.com",
-
+    callbackURL: "https://frozen-brushlands-38603.herokuapp.com/auth/google/secrets"
   },
   function(accessToken, refreshToken, profile, cb) {
     console.log(profile.displayName);
