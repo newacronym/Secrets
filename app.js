@@ -33,14 +33,13 @@ app.use(bodyParser.urlencoded({
 
 app.use(session({
   secret: "Our little secret.",
-
+  resave: false,
+  saveUninitialized: true,
   // if u want to store sessions in db , for this project i am not
   // cookie: {
   //   maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
   // },
   // store: store,
-  resave: false,
-  saveUninitialized: true,
 }));
 
 app.use(passport.initialize());
@@ -49,7 +48,7 @@ app.use(passport.session());
 mongoose.connect(process.env.MONGO_URL);
 
 const userSchema = new mongoose.Schema({
-  email: String,
+  username: String,
   password: String,
   googleId: String,
   title: [],
@@ -76,11 +75,13 @@ passport.deserializeUser(function(id, done) {
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: "https://frozen-brushlands-38603.herokuapp.com/auth/google/secrets" 
+    callbackURL: "http://localhost:3000/auth/google/secrets",
+    // https://frozen-brushlands-38603.herokuapp.com
   },
   function(accessToken, refreshToken, profile, cb) {
-    console.log(profile);
+    console.log(profile.displayName);
     User.findOrCreate({
+      username: profile.displayName,
       googleId: profile.id
     }, function(err, user) {
       return cb(err, user);
